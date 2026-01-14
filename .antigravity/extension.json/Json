@@ -1,0 +1,9 @@
+{
+  "name": "antigravity-group-room",
+  "commands": [
+    "antigravity.openGroupRoom",
+    "antigravity.addGoal",
+    "antigravity.startSession"
+  ]
+}
+
