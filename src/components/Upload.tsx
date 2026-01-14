@@ -31,6 +31,9 @@ const Upload: React.FC<UploadProps> = ({ onUpload }) => {
             <p style={{ fontSize: '0.8rem', opacity: 0.7 }}>
                 Photos are auto-downscaled to 1024px for processing.
             </p>
+            <p style={{ fontSize: '0.75rem', color: '#ff6b6b', marginTop: '0.5rem', fontWeight: 'bold' }}>
+                NOTE: Photos are not saved beyond processing. Export to save your new image, original images are destroyed upon closing this page.
+            </p>
         </div>
     );
 };

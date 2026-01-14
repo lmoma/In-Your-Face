@@ -7,23 +7,40 @@ interface ControlsProps {
     onShuffle: () => void;
     onReset: () => void;
     photoUploaded: boolean;
+    externalConfig?: {
+        indicators: Indicator[] | null;
+        palette: PaletteType;
+        subdivision: boolean;
+    };
 }
 
-const Controls: React.FC<ControlsProps> = ({ onUpdate, onExport, onShuffle, onReset, photoUploaded }) => {
+const Controls: React.FC<ControlsProps> = ({ onUpdate, onExport, onShuffle, onReset, photoUploaded, externalConfig }) => {
     const [indicators, setIndicators] = useState<Indicator[]>(MOCK_INDICATORS);
     const [palette, setPalette] = useState<PaletteType>('Neutral');
     const [subdivision, setSubdivision] = useState<boolean>(true);
+
+    // Sync with external config (reverts)
+    useEffect(() => {
+        if (externalConfig && externalConfig.indicators) {
+            setIndicators(externalConfig.indicators);
+            setPalette(externalConfig.palette);
+            setSubdivision(externalConfig.subdivision);
+        }
+    }, [externalConfig]);
 
     const handleSliderChange = (id: string, value: number) => {
         const updated = indicators.map(ind =>
             ind.id === id ? { ...ind, current: value } : ind
         );
         setIndicators(updated);
+        console.log("Sliders updated: no render triggered");
     };
 
-    useEffect(() => {
+    const handleApply = () => {
         onUpdate({ indicators, palette, subdivision });
-    }, [indicators, palette, subdivision, onUpdate]);
+    };
+
+    // Removed useEffect for auto-update
 
     return (
         <div className="controls-container">
@@ -53,6 +70,11 @@ const Controls: React.FC<ControlsProps> = ({ onUpdate, onExport, onShuffle, onRe
                     </div>
 
                     <div className="flex gap-2 mt-4" style={{ marginTop: '1rem' }}>
+                        <button onClick={handleApply} disabled={!photoUploaded} className="btn-shuffle" style={{ flex: 1, background: '#33ff57', color: '#000', fontWeight: 'bold' }}>
+                            Apply Changes
+                        </button>
+                    </div>
+                    <div className="flex gap-2 mt-2">
                         <button onClick={onShuffle} disabled={!photoUploaded} className="btn-shuffle" style={{ flex: 1 }}>
                             Shuffle
                         </button>
@@ -64,7 +86,7 @@ const Controls: React.FC<ControlsProps> = ({ onUpdate, onExport, onShuffle, onRe
                         onClick={onExport}
                         disabled={!photoUploaded}
                         className="btn-shuffle"
-                        style={{ width: '100%', marginTop: '0.5rem', background: '#33ff57', color: '#000' }}
+                        style={{ width: '100%', marginTop: '0.5rem', background: '#ccc', color: '#000' }}
                     >
                         Export 2048px PNG
                     </button>
